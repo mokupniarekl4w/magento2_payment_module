@@ -377,7 +377,7 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
 
         $xml = simplexml_load_string($response);
         $obj = json_decode(json_encode($xml));
-a
+
         if (property_exists($obj, 'paymentmethod') && $obj->paymentmethod) {
             return $obj->paymentmethod;
         } else {
@@ -625,6 +625,7 @@ a
 
         switch ($resultCode) {
             case self::MAKSUTURVA_PKG_RESULT_SUCCESS:
+                $this->helper->maksuturvaLogger("Package " . (string)$xml->pkg_id . " delivery info update result: " . (string)$xml->pkg_resulttext);
                 return array('pkg_resultcode' => $resultCode, 'pkg_id' => (string)$xml->pkg_id, 'pkg_resulttext' => (string)$xml->pkg_resulttext);
             default:
                 throw new \Magento\Framework\Exception\LocalizedException(
