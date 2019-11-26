@@ -1,6 +1,8 @@
 <?php
 namespace Svea\Maksuturva\Model\Gateway;
 
+use DateTime;
+
 class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
 {
     const MAKSUTURVA_PKG_RESULT_SUCCESS = 00;
@@ -56,7 +58,8 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
         \Magento\Tax\Model\Calculation $calculationModel,
         \Svea\Maksuturva\Api\MaksuturvaFormInterface $maksuturvaForm,
         \Magento\Framework\HTTP\Client\Curl $curl = null,
-        \Magento\Framework\Event\ManagerInterface $eventManager
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata
     )
     {
         parent::__construct();
@@ -72,7 +75,8 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
         $this->_maksuturvaForm = $maksuturvaForm;
         $this->curlClient = $curl ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\HTTP\Client\Curl::class); 
         $this->eventManager = $eventManager ?: \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Event\ManagerInterface::class);
-        }
+        $this->productMetadata = $productMetadata;
+    }
 
     public  function setConfig($config)
     {
@@ -360,6 +364,8 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
             "sellerid" => $this->sellerId,
             "request_locale" => $this->_scopeConfig->getValue('maksuturva_config/maksuturva_payment/locale'), // allowed values: fi, sv, en
             "totalamount" => number_format($total, 2, ",", ""),
+            "req_ts_ms" => \DateTime::createFromFormat('U.u', microtime(TRUE))->format('Y-m-d H:i:s:u'),
+            "mage_version" => $this->productMetadata->getVersion()
         );
 
         try {
@@ -371,7 +377,7 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
 
         $xml = simplexml_load_string($response);
         $obj = json_decode(json_encode($xml));
-
+a
         if (property_exists($obj, 'paymentmethod') && $obj->paymentmethod) {
             return $obj->paymentmethod;
         } else {
@@ -424,7 +430,9 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
             "pmtq_resptype" => "XML",
             //"pmtq_return" => "",	// optional
             "pmtq_hashversion" => $this->_pmt_hashversion,
-            "pmtq_keygeneration" => $this->keyVersion
+            "pmtq_keygeneration" => $this->keyVersion,
+            "req_ts_ms" => \DateTime::createFromFormat('U.u', microtime(TRUE))->format('Y-m-d H:i:s:u'),
+            "mage_version" => $this->productMetadata->getVersion()
         );
 
         $statusQueryData = array_merge($defaultFields, $data);
@@ -592,7 +600,9 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Base
             "pkg_allsent" => "Y",
             "pkg_resptype" => "XML",
             "pkg_hashversion" => $this->_pmt_hashversion,
-            "pkg_keygeneration" => $this->keyVersion
+            "pkg_keygeneration" => $this->keyVersion,
+            "req_ts_ms" => \DateTime::createFromFormat('U.u', microtime(TRUE))->format('Y-m-d H:i:s:u'),
+            "mage_version" => $this->productMetadata->getVersion()
         );
 
         // hash calculation

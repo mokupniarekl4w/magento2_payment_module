@@ -26,9 +26,8 @@ There is no guarantee that the module is fully functional in any other environme
 
 2. Install 
 
-Don't run commands as root. Use www user.
-
-
+Don't run commands as root. Use www user.  
+  
 Enable maintenance mode (optional)
 ```
 php bin/magento maintenance:enable
@@ -141,6 +140,10 @@ Allow cancellation of payments that have been settled to seller. This will be at
 ## Send refund payment information with email
 
 Send email containing information for paying back the settled amount of payment to Maksuturva. You can give email sender, recipients, and custom email template.
+
+# Log files
+
+Log file svea-maksuturva.log is located in ./var/log directory. Note the directory name is relative to your Magento installation directory.
 
 # Sandbox testing
 

@@ -18,9 +18,10 @@ class Implementation extends \Svea\Maksuturva\Model\Gateway\Implementation
         \Svea\Maksuturva\Model\Form $maksuturvaForm,
         \Svea\MaksuturvaMasterpass\Model\Form\MasterpassBaseForm $masterpassBaseForm,
         \Magento\Framework\HTTP\Client\Curl $curl = null,
-        \Magento\Framework\Event\ManagerInterface $eventManager 
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata
     ) {
-        parent::__construct($maksuturvaHelper, $storeManager, $scopeConfig, $urlBuilder, $groupFactory, $checkoutSession, $orderFactory, $taxHelper, $calculationModel, $maksuturvaForm, $curl, $eventManager);
+        parent::__construct($maksuturvaHelper, $storeManager, $scopeConfig, $urlBuilder, $groupFactory, $checkoutSession, $orderFactory, $taxHelper, $calculationModel, $maksuturvaForm, $curl, $eventManager, $productMetadata);
         $this->baseForm = $masterpassBaseForm;
     }
 
